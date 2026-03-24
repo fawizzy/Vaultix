@@ -139,8 +139,6 @@ export class EscrowStellarIntegrationService {
       const operations = this.escrowOperationsService.createFundingOps(
         escrowId,
         funderPublicKey,
-        amount,
-        asset,
       );
 
       // Build the transaction
@@ -179,29 +177,19 @@ export class EscrowStellarIntegrationService {
     escrowId: string,
     milestoneId: number,
     releaserPublicKey: string,
-    recipientPublicKey: string,
-    amount: string,
-    assetCode: string = 'XLM',
+    // recipientPublicKey: string,
+    // amount: string,
+    // assetCode: string = 'XLM',
   ): Promise<string> {
     try {
       this.logger.log(
         `Releasing milestone ${milestoneId} for escrow ${escrowId}`,
       );
 
-      // Determine asset
-      const asset =
-        assetCode === 'XLM' || assetCode === 'native'
-          ? StellarSdk.Asset.native()
-          : new StellarSdk.Asset(assetCode, recipientPublicKey); // Simplified
-
       // Create milestone release operations
       const operations = this.escrowOperationsService.createMilestoneReleaseOps(
         escrowId,
         milestoneId,
-        releaserPublicKey,
-        recipientPublicKey,
-        amount,
-        asset,
       );
 
       // Build the transaction
@@ -230,24 +218,24 @@ export class EscrowStellarIntegrationService {
    * Confirms delivery/acceptance of an escrow on the Stellar blockchain
    * @param escrowId The ID of the escrow to confirm
    * @param confirmerPublicKey The public key of the account confirming
-   * @param confirmationStatus The status of the confirmation
+   * @param milestoneId The milestone ID
    * @returns Transaction hash of the confirmation transaction
    */
   async confirmEscrow(
     escrowId: string,
     confirmerPublicKey: string,
-    confirmationStatus: 'confirmed' | 'disputed' | 'released' = 'confirmed',
+    milestoneId: number,
   ): Promise<string> {
     try {
       this.logger.log(
-        `Confirming escrow ${escrowId} with status: ${confirmationStatus}`,
+        `Confirming escrow ${escrowId} for milestone: ${milestoneId}`,
       );
 
       // Create confirmation operations
       const operations = this.escrowOperationsService.createConfirmationOps(
         escrowId,
         confirmerPublicKey,
-        confirmationStatus,
+        milestoneId,
       );
 
       // Build the transaction
@@ -261,7 +249,7 @@ export class EscrowStellarIntegrationService {
         await this.stellarService.submitTransaction(transaction);
 
       this.logger.log(
-        `Successfully confirmed escrow ${escrowId} with status ${confirmationStatus}, transaction: ${result.hash}`,
+        `Successfully confirmed milestone ${milestoneId} for escrow ${escrowId}, transaction: ${result.hash}`,
       );
       return result.hash;
     } catch (error) {
@@ -283,7 +271,7 @@ export class EscrowStellarIntegrationService {
     escrowId: string,
     cancellerPublicKey: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    refundDestination: string,
+    // refundDestination: string,
   ): Promise<string> {
     try {
       this.logger.log(`Canceling on-chain escrow ${escrowId}`);
@@ -291,7 +279,6 @@ export class EscrowStellarIntegrationService {
       // Create cancel operations
       const operations = this.escrowOperationsService.createCancelOps(
         escrowId,
-        cancellerPublicKey,
       );
 
       // Build the transaction
@@ -332,7 +319,6 @@ export class EscrowStellarIntegrationService {
       // Create completion operations
       const operations = this.escrowOperationsService.createCompletionOps(
         escrowId,
-        completerPublicKey,
       );
 
       // Build the transaction
@@ -340,6 +326,7 @@ export class EscrowStellarIntegrationService {
         completerPublicKey, // Source account
         operations,
       );
+
 
       // Submit the transaction to the Stellar network
       const result: StellarSubmitTransactionResponse =
