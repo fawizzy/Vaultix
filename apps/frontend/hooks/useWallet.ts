@@ -1,19 +1,16 @@
-import { useState } from 'react';
+import { useWalletConnection } from '@/app/hooks/useWallet';
 import { IWalletHookReturn } from '@/types/escrow';
+import { WalletType } from '@/app/services/wallet';
 
+export { useWalletConnection };
+
+// Backward-compatible hook for components using the old { connected, publicKey, connect } shape
 export const useWallet = (): IWalletHookReturn => {
-  const [connected, setConnected] = useState(false);
-  const [publicKey, setPublicKey] = useState<string | null>(null);
-
-  const connect = () => {
-    // Mock implementation - in real app this would connect to a wallet provider
-    setConnected(true);
-    setPublicKey('GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFSHONUCEOASW7QC7OX2H'); // Mock public key
-  };
+  const { isConnected, publicKey, connect } = useWalletConnection();
 
   return {
-    connected,
-    publicKey,
-    connect
+    connected: isConnected,
+    publicKey: publicKey ?? null,
+    connect: () => connect(WalletType.FREIGHTER),
   };
 };

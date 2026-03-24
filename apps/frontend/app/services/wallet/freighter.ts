@@ -77,15 +77,28 @@ export class FreighterService {
     try {
       const freighter = await this.getFreighter();
       const network = await this.getNetwork();
-      
+
       const signedXdr = await freighter.signTransaction(xdr, {
         network,
         accountToSign: await freighter.getPublicKey(),
       });
-      
+
       return signedXdr;
     } catch (error: any) {
       throw new Error(`Failed to sign transaction: ${error.message}`);
+    }
+  }
+
+  async signMessage(message: string): Promise<string> {
+    try {
+      const freighter = await this.getFreighter();
+      // window.freighter.signMessage returns a base64-encoded Ed25519 signature
+      const result = await freighter.signMessage(message);
+      const sigBase64 = typeof result === 'string' ? result : result.signature;
+      // Convert base64 → hex as expected by the backend
+      return Buffer.from(sigBase64, 'base64').toString('hex');
+    } catch (error: any) {
+      throw new Error(`Failed to sign message: ${error.message}`);
     }
   }
 }

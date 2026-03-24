@@ -15,6 +15,7 @@ export interface WalletConnection {
 export interface IWalletService {
   connect(): Promise<string>;
   signTransaction(xdr: string): Promise<string>;
+  signMessage?(message: string): Promise<string>;
   getNetwork?(): Promise<string>;
   isInstalled?(): Promise<boolean>;
   disconnect?(): Promise<void>;

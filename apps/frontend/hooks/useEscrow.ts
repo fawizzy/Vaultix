@@ -1,41 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { IEscrowExtended, IUseEscrowReturn } from '@/types/escrow';
+import { EscrowService } from '@/services/escrow';
+import { ApiError } from '@/lib/api-client';
 
 export const useEscrow = (id: string): IUseEscrowReturn => {
-  const [escrow, setEscrow] = useState<IEscrowExtended | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = useQuery<IEscrowExtended | null, ApiError>({
+    queryKey: ['escrow', id],
+    queryFn: () => EscrowService.getEscrowById(id),
+    enabled: !!id,
+    retry: (failureCount, error) => {
+      if (error instanceof ApiError && error.status === 404) return false;
+      return failureCount < 2;
+    },
+  });
 
-  useEffect(() => {
-    const fetchEscrow = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/escrows/${id}`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('Escrow not found');
-          } else {
-            setError('Failed to load escrow details');
-          }
-          return;
-        }
-        
-        const data = await response.json();
-        setEscrow(data);
-        setError(null);
-      } catch (err) {
-        setError('An error occurred while fetching escrow details');
-        console.error('Error fetching escrow:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const errorMessage = query.error
+    ? query.error instanceof ApiError && query.error.status === 404
+      ? 'Escrow not found'
+      : 'Failed to load escrow details'
+    : null;
 
-    if (id) {
-      fetchEscrow();
-    }
-  }, [id]);
-
-  return { escrow, loading, error };
+  return {
+    escrow: query.data ?? null,
+    loading: query.isLoading,
+    error: errorMessage,
+  };
 };

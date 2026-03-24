@@ -10,6 +10,7 @@ interface WalletContextType {
   connect: (walletType: WalletType) => Promise<void>;
   disconnect: () => void;
   signTransaction: (xdr: string) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
   getAvailableWallets: () => Promise<WalletType[]>;
 }
 
@@ -75,12 +76,16 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   };
 
   const signTransaction = async (xdr: string): Promise<string> => {
-    if (!wallet) {
-      throw new Error('No wallet connected');
-    }
-
+    if (!wallet) throw new Error('No wallet connected');
     const service = WalletServiceFactory.getService(wallet.walletType);
     return await service.signTransaction(xdr);
+  };
+
+  const signMessage = async (message: string): Promise<string> => {
+    if (!wallet) throw new Error('No wallet connected');
+    const service = WalletServiceFactory.getService(wallet.walletType);
+    if (!service.signMessage) throw new Error('Connected wallet does not support message signing');
+    return await service.signMessage(message);
   };
 
   const getAvailableWallets = async (): Promise<WalletType[]> => {
@@ -96,6 +101,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         connect,
         disconnect,
         signTransaction,
+        signMessage,
         getAvailableWallets,
       }}
     >

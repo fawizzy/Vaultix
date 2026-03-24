@@ -3,8 +3,8 @@ import { useWallet as useWalletContext } from "../contexts/WalletContext";
 
 
 export const useWalletConnection = () => {
-  const { wallet, isConnecting, error, connect, disconnect } = useWalletContext();
-  
+  const { wallet, isConnecting, error, connect, disconnect, signMessage } = useWalletContext();
+
   return {
     isConnected: !!wallet,
     wallet,
@@ -12,8 +12,9 @@ export const useWalletConnection = () => {
     error,
     connect,
     disconnect,
-    publicKey: wallet?.publicKey,
-    walletType: wallet?.walletType,
-    network: wallet?.network,
+    signMessage,
+    publicKey: wallet?.publicKey ?? null,
+    walletType: wallet?.walletType ?? null,
+    network: wallet?.network ?? null,
   };
 };
