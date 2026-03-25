@@ -9,7 +9,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Horizon, rpc, xdr, Address } from '@stellar/stellar-sdk';
+import { rpc, xdr, Address } from '@stellar/stellar-sdk';
 import {
   StellarEvent,
   StellarEventType,
@@ -179,7 +179,7 @@ export class StellarEventListenerService implements OnModuleInit {
         const lastLedger = response.events[response.events.length - 1].ledger;
         if (lastLedger >= endLedger) break;
         currentStart = lastLedger + 1;
-        
+
         if (response.events.length < 100) break;
       }
     } catch (error) {
@@ -274,8 +274,10 @@ export class StellarEventListenerService implements OnModuleInit {
       // Soroban event structure in getEvents response:
       // event.topic: Array of ScVal (XDR base64)
       // event.value: ScVal (XDR base64)
-      
-      const topics = event.topic.map((t: string) => xdr.ScVal.fromXDR(t, 'base64'));
+
+      const topics = event.topic.map((t: string) =>
+        xdr.ScVal.fromXDR(t, 'base64'),
+      );
       const value = xdr.ScVal.fromXDR(event.value, 'base64');
 
       // First topic is always the event name (Symbol)
@@ -285,7 +287,7 @@ export class StellarEventListenerService implements OnModuleInit {
       }
 
       switch (eventType) {
-        case StellarEventType.ESCROW_CREATED:
+        case StellarEventType.ESCROW_CREATED: {
           // Value: [depositor, recipient, token_address, milestones, deadline]
           const createdVec = value.vec();
           if (createdVec) {
@@ -294,19 +296,21 @@ export class StellarEventListenerService implements OnModuleInit {
             // ... (milestones and other fields can be extracted if needed)
           }
           break;
+        }
 
         case StellarEventType.ESCROW_FUNDED:
           // Value: funder (Address)
           fields.fromAddress = Address.fromScVal(value).toString();
           break;
 
-        case StellarEventType.MILESTONE_RELEASED:
+        case StellarEventType.MILESTONE_RELEASED: {
           // Topics: [Symbol("milestone_released"), escrow_id, milestone_index]
           // Value: amount (i128)
           fields.milestoneIndex = topics[2].u32();
           const amountParts = value.i128();
           fields.amount = amountParts.lo().toString();
           break;
+        }
 
         case StellarEventType.ESCROW_COMPLETED:
         case StellarEventType.ESCROW_CANCELLED:
@@ -354,7 +358,6 @@ export class StellarEventListenerService implements OnModuleInit {
       return 'unknown' as any;
     }
   }
-
 
   private async updateEscrowFromEvent(event: StellarEvent) {
     if (!event.escrowId) {

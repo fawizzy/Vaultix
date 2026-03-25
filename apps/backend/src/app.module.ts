@@ -73,4 +73,4 @@ import { StellarEvent } from './modules/stellar/entities/stellar-event.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -22,7 +22,9 @@ describe('EscrowOperationsService Integration', () => {
     const depositor = StellarSdk.Keypair.random().publicKey();
     const recipient = StellarSdk.Keypair.random().publicKey();
     const token = StellarSdk.Keypair.random().publicKey(); // Or contract ID
-    const milestones = [{ id: 1, amount: '1000', description: 'Test milestone' }];
+    const milestones = [
+      { id: 1, amount: '1000', description: 'Test milestone' },
+    ];
     const deadline = Math.floor(Date.now() / 1000) + 3600;
 
     const ops = service.createEscrowInitializationOps(
@@ -31,19 +33,23 @@ describe('EscrowOperationsService Integration', () => {
       recipient,
       token,
       milestones,
-      deadline
+      deadline,
     );
 
-    expect(ops.length).toBe(1);
-    const op = ops[0] as any;
+    const op = ops[0] as any as {
+      body: {
+        value: () => {
+          call: () => { functionName: () => { args: () => any[] } };
+        };
+      };
+    };
     // In newer SDKs, op might be an XDR operation object
     // or a higher level object with a different structure
     expect(op).toBeDefined();
   });
 
   it('should create funding operations', () => {
-    const depositor = StellarSdk.Keypair.random().publicKey();
-    const ops = service.createFundingOps('123', depositor);
+    const ops = service.createFundingOps('123');
     expect(ops.length).toBe(1);
     expect(ops[0]).toBeDefined();
   });

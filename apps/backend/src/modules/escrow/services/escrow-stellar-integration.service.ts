@@ -2,7 +2,6 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as StellarSdk from '@stellar/stellar-sdk';
 import { Escrow } from '../entities/escrow.entity';
 import { Party } from '../entities/party.entity';
 import { Condition } from '../entities/condition.entity';
@@ -129,17 +128,15 @@ export class EscrowStellarIntegrationService {
         `Funding on-chain escrow ${escrowId} with ${amount} ${assetCode}`,
       );
 
-      // Determine asset
-      const asset =
-        assetCode === 'XLM' || assetCode === 'native'
-          ? StellarSdk.Asset.native()
-          : new StellarSdk.Asset(assetCode, funderPublicKey); // Simplified - in reality, issuer would be different
+      // Determine asset (unused but kept logic if needed later, currently causing lint error)
+      // const asset =
+      //   assetCode === 'XLM' || assetCode === 'native'
+      //     ? StellarSdk.Asset.native()
+      //     : new StellarSdk.Asset(assetCode, funderPublicKey);
 
       // Create funding operations
-      const operations = this.escrowOperationsService.createFundingOps(
-        escrowId,
-        funderPublicKey,
-      );
+      const operations =
+        this.escrowOperationsService.createFundingOps(escrowId);
 
       // Build the transaction
       const transaction = await this.stellarService.buildTransaction(
@@ -270,16 +267,14 @@ export class EscrowStellarIntegrationService {
   async cancelOnChainEscrow(
     escrowId: string,
     cancellerPublicKey: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     // refundDestination: string,
   ): Promise<string> {
     try {
       this.logger.log(`Canceling on-chain escrow ${escrowId}`);
 
       // Create cancel operations
-      const operations = this.escrowOperationsService.createCancelOps(
-        escrowId,
-      );
+      const operations = this.escrowOperationsService.createCancelOps(escrowId);
 
       // Build the transaction
       const transaction = await this.stellarService.buildTransaction(
@@ -317,16 +312,14 @@ export class EscrowStellarIntegrationService {
       this.logger.log(`Completing on-chain escrow ${escrowId}`);
 
       // Create completion operations
-      const operations = this.escrowOperationsService.createCompletionOps(
-        escrowId,
-      );
+      const operations =
+        this.escrowOperationsService.createCompletionOps(escrowId);
 
       // Build the transaction
       const transaction = await this.stellarService.buildTransaction(
         completerPublicKey, // Source account
         operations,
       );
-
 
       // Submit the transaction to the Stellar network
       const result: StellarSubmitTransactionResponse =
