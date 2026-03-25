@@ -1,5 +1,5 @@
 import React from 'react';
-import { Share, Copy, Wallet, Clock, CheckCircle, AlertTriangle, XCircle, ShareIcon } from 'lucide-react';
+import { Clock, CheckCircle, AlertTriangle, XCircle, ShareIcon } from 'lucide-react';
 import { IEscrowExtended } from '@/types/escrow';
 
 interface EscrowHeaderProps {
@@ -44,12 +44,10 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-const EscrowHeader: React.FC<EscrowHeaderProps> = ({ 
-  escrow, 
-  userRole, 
-  connected, 
-  connect, 
-  publicKey 
+const EscrowHeader: React.FC<EscrowHeaderProps> = ({
+  escrow,
+  connected,
+  connect,
 }: EscrowHeaderProps) => {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);

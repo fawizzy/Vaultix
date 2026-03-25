@@ -36,7 +36,7 @@ export class CreateConditionDto {
   type?: ConditionType;
 
   @IsOptional()
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export class CreateEscrowDto {

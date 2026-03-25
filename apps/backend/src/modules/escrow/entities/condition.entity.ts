@@ -63,7 +63,7 @@ export class Condition {
   metByUserId?: string;
 
   @Column({ type: 'simple-json', nullable: true })
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 
   @CreateDateColumn()
   createdAt: Date;

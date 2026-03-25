@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Escrow } from '../entities/escrow.entity';
-import { Party } from '../entities/party.entity';
+import { Party, PartyRole } from '../entities/party.entity';
 import { Condition } from '../entities/condition.entity';
 import { StellarService } from '../../../services/stellar.service';
 import { EscrowOperationsService } from '../../../services/stellar/escrow-operations';
@@ -51,7 +51,7 @@ export class EscrowStellarIntegrationService {
 
       // Get the depositor (usually the buyer)
       const depositor = escrow.parties.find(
-        (party) => party.role === ('buyer' as any),
+        (party) => party.role === PartyRole.BUYER,
       );
       if (!depositor) {
         throw new Error(`Depositor not found for escrow ${escrowId}`);
@@ -59,7 +59,7 @@ export class EscrowStellarIntegrationService {
 
       // Get the recipient (usually the seller)
       const recipient = escrow.parties.find(
-        (party) => party.role === ('seller' as any),
+        (party) => party.role === PartyRole.SELLER,
       );
       if (!recipient) {
         throw new Error(`Recipient not found for escrow ${escrowId}`);
@@ -386,7 +386,7 @@ export class EscrowStellarIntegrationService {
     }
     if (typeof error === 'object' && error !== null && 'message' in error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return String((error as any).message);
+      return String((error as { message: unknown }).message);
     }
     return 'Unknown error';
   }

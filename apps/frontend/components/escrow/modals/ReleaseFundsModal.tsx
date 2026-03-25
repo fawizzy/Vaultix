@@ -42,9 +42,10 @@ export const ReleaseFundsModal: React.FC<ReleaseFundsModalProps> = ({
   publicKey,
   network = "testnet",
 }) => {
+  const escrowExtra = escrow as Record<string, unknown>;
   const existingTxHash =
-    (escrow as any).releaseTransactionHash ??
-    (escrow as any).onChainReleaseHash ??
+    (escrowExtra.releaseTransactionHash as string | undefined) ??
+    (escrowExtra.onChainReleaseHash as string | undefined) ??
     null;
 
   const isAlreadyReleased =
@@ -59,9 +60,7 @@ export const ReleaseFundsModal: React.FC<ReleaseFundsModalProps> = ({
   const [txHash, setTxHash] = useState<string | null>(existingTxHash ?? null);
 
   const sellerAddress =
-    escrow.counterpartyAddress || (escrow as any).sellerAddress || "Unknown";
-  const buyerAddress =
-    escrow.creatorAddress || (escrow.creator && escrow.creator.walletAddress);
+    escrow.counterpartyAddress || (escrowExtra.sellerAddress as string | undefined) || "Unknown";
 
   const formattedAmount = useMemo(() => {
     const num = Number(escrow.amount);
@@ -162,7 +161,6 @@ export const ReleaseFundsModal: React.FC<ReleaseFundsModalProps> = ({
 
   const primaryDisabled = isSubmitting || (!connected && step !== "success");
 
-  const showTracker = step === "success" && txHash;
 
   if (!isOpen) {
     return null;

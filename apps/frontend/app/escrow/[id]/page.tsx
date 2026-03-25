@@ -9,11 +9,9 @@ import EscrowHeader from '@/components/escrow/detail/EscrowHeader';
 import PartiesSection from '@/components/escrow/detail/PartiesSection';
 import TermsSection from '@/components/escrow/detail/TermsSection';
 import TimelineSection from '@/components/escrow/detail/TimelineSection';
-import TransactionHistory from '@/components/escrow/detail/TransactionHistory';
 import ActivityFeed from '@/components/common/ActivityFeed';
-import { IEscrowExtended } from '@/types/escrow';
+import { IParty } from '@/types/escrow';
 import FileDisputeModal from '@/components/escrow/detail/file-dispute-modal';
-import { Button } from '@/components/ui/button';
 import { EscrowDetailSkeleton } from '@/components/ui/EscrowDetailSkeleton';
 
 const EscrowDetailPage = () => {
@@ -28,7 +26,7 @@ const EscrowDetailPage = () => {
     if (escrow && publicKey) {
       if (escrow.creatorId === publicKey) {
         setUserRole('creator');
-      } else if (escrow.parties?.some((party: any) => party.userId === publicKey)) {
+      } else if (escrow.parties?.some((party: IParty) => party.userId === publicKey)) {
         setUserRole('counterparty');
       }
     }

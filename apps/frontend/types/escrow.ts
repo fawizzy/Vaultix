@@ -30,14 +30,14 @@ export interface ICondition {
   id: string;
   description: string;
   type: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface IEscrowEvent {
   id: string;
   eventType: 'CREATED' | 'PARTY_ADDED' | 'PARTY_ACCEPTED' | 'PARTY_REJECTED' | 'FUNDED' | 'CONDITION_MET' | 'STATUS_CHANGED' | 'UPDATED' | 'CANCELLED' | 'COMPLETED' | 'DISPUTED';
   actorId?: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   ipAddress?: string;
   createdAt: string;
 }

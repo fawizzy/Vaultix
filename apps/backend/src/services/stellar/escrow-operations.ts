@@ -292,7 +292,7 @@ export class EscrowOperationsService {
     }
     if (typeof error === 'object' && error !== null && 'message' in error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return String((error as any).message);
+      return String((error as { message: unknown }).message);
     }
     return 'Unknown error';
   }

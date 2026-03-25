@@ -61,8 +61,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
 
       setWallet(walletConnection);
       window.localStorage.setItem('vaultix_wallet', JSON.stringify(walletConnection));
-    } catch (err: any) {
-      setError(err.message || 'Failed to connect wallet');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to connect wallet');
       throw err;
     } finally {
       setIsConnecting(false);

@@ -157,7 +157,7 @@ export class StellarService {
   streamTransactions(
     accountId: string,
     callback: (transaction: StellarTransactionResponse) => void,
-  ): any {
+  ): () => void {
     this.logger.log(`Starting transaction stream for account: ${accountId}`);
 
     const handler = (transaction: StellarTransactionResponse) => {
@@ -265,17 +265,14 @@ export class StellarService {
    * Type guard to check if error has response with status
    */
   private isNotFoundError(error: unknown): boolean {
-    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'response' in error &&
-      typeof (error as any).response === 'object' &&
-      (error as any).response !== null &&
-      'status' in (error as any).response &&
-      (error as any).response.status === 404
-    );
-    /* eslint-enable @typescript-eslint/no-unsafe-member-access */
+    if (typeof error !== 'object' || error === null || !('response' in error)) {
+      return false;
+    }
+    const { response } = error as { response: unknown };
+    if (typeof response !== 'object' || response === null || !('status' in response)) {
+      return false;
+    }
+    return (response as { status: unknown }).status === 404;
   }
 
   /**
@@ -286,8 +283,7 @@ export class StellarService {
       return error.message;
     }
     if (typeof error === 'object' && error !== null && 'message' in error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return String((error as any).message);
+      return String((error as { message: unknown }).message);
     }
     return 'Unknown error';
   }
@@ -307,7 +303,7 @@ export class StellarService {
     if (typeof error === 'object' && error !== null) {
       // Check if it's a Horizon API error
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const errorObj = error as any;
+      const errorObj = error as Record<string, unknown>;
       /* eslint-disable @typescript-eslint/no-unsafe-member-access */
       if (errorObj.response?.data) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

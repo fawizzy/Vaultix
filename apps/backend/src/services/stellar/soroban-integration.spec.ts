@@ -36,10 +36,10 @@ describe('EscrowOperationsService Integration', () => {
       deadline,
     );
 
-    const op = ops[0] as any as {
+    const op = ops[0] as unknown as {
       body: {
         value: () => {
-          call: () => { functionName: () => { args: () => any[] } };
+          call: () => { functionName: () => { args: () => unknown[] } };
         };
       };
     };

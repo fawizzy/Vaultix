@@ -1,6 +1,6 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, MoreThan, LessThan } from 'typeorm';
+import { Repository, Between, MoreThan, FindOptionsWhere } from 'typeorm';
 import { User, UserRole } from '../user/entities/user.entity';
 import { AdminAuditLogService } from './services/admin-audit-log.service';
 import { Escrow, EscrowStatus } from '../escrow/entities/escrow.entity';
@@ -56,7 +56,7 @@ export class AdminService {
   }) {
     const { status, page = 1, limit = 50, startDate, endDate } = filters;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Escrow> = {};
     if (status) where.status = status;
     if (startDate && endDate) {
       where.createdAt = Between(new Date(startDate), new Date(endDate));

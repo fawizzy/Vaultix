@@ -23,12 +23,13 @@ export class AlbedoService {
     try {
       const result = await this.publicKey()
       return result;
-    } catch (error: any) {
-      throw new Error(`Failed to connect with Albedo: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`Failed to connect with Albedo: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  async signTransaction(xdr: string): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async signTransaction(_xdr: string): Promise<string> {
     try {
       const result = await "await albedo.signTransaction({xdr, network: this.getNetworkParam()});"
       
@@ -37,8 +38,8 @@ export class AlbedoService {
       }
       
       return result;
-    } catch (error: any) {
-      throw new Error(`Failed to sign transaction with Albedo: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`Failed to sign transaction with Albedo: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -51,8 +52,8 @@ export class AlbedoService {
     try {
       const result = "await albedo.publicKey({});"
       return result;
-    } catch (error: any) {
-      throw new Error(`Failed to get public key from Albedo: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`Failed to get public key from Albedo: ${error instanceof Error ? error.message : String(error)}`);
     }   
     }
 }

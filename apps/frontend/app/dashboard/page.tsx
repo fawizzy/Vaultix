@@ -29,7 +29,7 @@ export default function DashboardPage() {
   });
 
   // Flatten the paginated data
-  const flatEscrows = escrowsData?.pages.flatMap((page: any) => page.escrows) || [];
+  const flatEscrows = escrowsData?.pages.flatMap((page: { escrows: IEscrow[] }) => page.escrows) || [];
 
   // Handle tab changes
   const handleTabChange = (tab: 'all' | 'active' | 'pending' | 'completed' | 'disputed') => {

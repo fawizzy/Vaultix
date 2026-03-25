@@ -1,15 +1,17 @@
 // Update the import - use the correct way to access freighter
 declare global {
   interface Window {
-    freighter?: any;
+    freighter?: FreighterWallet;
   }
 }
 
 export interface FreighterWallet {
   isConnected: () => Promise<boolean>;
   getPublicKey: () => Promise<string>;
-  signTransaction: (xdr: string, opts?: any) => Promise<string>;
+  signTransaction: (xdr: string, opts?: Record<string, unknown>) => Promise<string>;
   getNetwork: () => Promise<string>;
+  enable: () => Promise<void>;
+  signMessage: (message: string) => Promise<string | { signature: string }>;
 }
 
 export class FreighterService {
@@ -24,7 +26,7 @@ export class FreighterService {
     return FreighterService.instance;
   }
 
-  private async getFreighter(): Promise<any> {
+  private async getFreighter(): Promise<FreighterWallet> {
     // Check if freighter is available
     if (typeof window === 'undefined') {
       throw new Error('Window is not defined');
@@ -42,7 +44,7 @@ export class FreighterService {
     try {
       if (typeof window === 'undefined') return false;
       return !!window.freighter;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -58,8 +60,8 @@ export class FreighterService {
       const publicKey = await freighter.getPublicKey();
       
       return publicKey;
-    } catch (error: any) {
-      throw new Error(`Failed to connect to Freighter: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`Failed to connect to Freighter: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -68,7 +70,7 @@ export class FreighterService {
       const freighter = await this.getFreighter();
       const network = await freighter.getNetwork();
       return network.toLowerCase(); // Convert to lowercase for consistency
-    } catch (error) {
+    } catch {
       throw new Error('Failed to get network from Freighter');
     }
   }
@@ -84,8 +86,8 @@ export class FreighterService {
       });
 
       return signedXdr;
-    } catch (error: any) {
-      throw new Error(`Failed to sign transaction: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`Failed to sign transaction: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -97,8 +99,8 @@ export class FreighterService {
       const sigBase64 = typeof result === 'string' ? result : result.signature;
       // Convert base64 → hex as expected by the backend
       return Buffer.from(sigBase64, 'base64').toString('hex');
-    } catch (error: any) {
-      throw new Error(`Failed to sign message: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`Failed to sign message: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }

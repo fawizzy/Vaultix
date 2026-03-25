@@ -25,7 +25,7 @@ const StatusTabs: React.FC<StatusTabsProps> = ({ activeTab, onTabChange }) => {
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
-            onClick={() => onTabChange(tab.id as any)}
+            onClick={() => onTabChange(tab.id as 'all' | 'active' | 'pending' | 'completed' | 'disputed')}
           >
             {tab.label}
           </button>

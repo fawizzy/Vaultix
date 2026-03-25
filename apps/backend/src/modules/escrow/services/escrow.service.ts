@@ -1034,7 +1034,7 @@ export class EscrowService {
     escrowId: string,
     eventType: EscrowEventType,
     actorId: string,
-    data?: Record<string, any>,
+    data?: Record<string, unknown>,
     ipAddress?: string,
   ): Promise<EscrowEvent> {
     const event = this.eventRepository.create({

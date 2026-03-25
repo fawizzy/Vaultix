@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Filter, Loader2, RefreshCw, Zap } from 'lucide-react';
 import { useEvents } from '@/hooks/useEvents';
 import ActivityItem from './ActivityItem';
-import { IEscrowEvent } from '@/types/escrow';
 import { ActivityFeedSkeleton } from '../ui/ActivityFeedSkeleton';
 
 interface ActivityFeedProps {
@@ -22,7 +21,6 @@ const EVENT_FILTERS = [
 
 const ActivityFeed: React.FC<ActivityFeedProps> = ({
     escrowId,
-    maxNotifications = 20,
     className = ""
 }) => {
     const [filter, setFilter] = useState('ALL');

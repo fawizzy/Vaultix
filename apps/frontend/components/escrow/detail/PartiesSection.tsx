@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IEscrowExtended, IParty } from '@/types/escrow';
+import { IEscrowExtended, IParty, ICondition } from '@/types/escrow';
 import { PartyAcceptanceModal } from '../modals/PartyAcceptanceModal';
 
 interface PartiesSectionProps {
@@ -95,7 +95,7 @@ const PartiesSection: React.FC<PartiesSectionProps> = ({ escrow, userRole }: Par
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Parties</h2>
       
       <div className="space-y-4">
-        {escrow.parties.map((party: any) => (
+        {escrow.parties.map((party: IParty) => (
           <div key={party.id} className="border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -137,7 +137,7 @@ const PartiesSection: React.FC<PartiesSectionProps> = ({ escrow, userRole }: Par
         <div className="mt-6">
           <h3 className="text-lg font-medium text-gray-900 mb-3">Conditions</h3>
           <ul className="space-y-2">
-            {escrow.conditions.map((condition: any) => (
+            {escrow.conditions.map((condition: ICondition) => (
               <li key={condition.id} className="flex items-start">
                 <div className="flex-shrink-0 h-5 w-5 text-green-500">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

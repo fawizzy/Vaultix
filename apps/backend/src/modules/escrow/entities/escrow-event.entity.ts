@@ -48,7 +48,7 @@ export class EscrowEvent {
   actorId?: string;
 
   @Column({ type: 'simple-json', nullable: true })
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 
   @Column({ nullable: true })
   ipAddress?: string;

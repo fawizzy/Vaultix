@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {

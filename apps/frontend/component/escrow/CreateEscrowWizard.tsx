@@ -4,15 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { createEscrowSchema, CreateEscrowFormData } from '@/lib/escrow-schema';
 import BasicInfoStep from './create/BasicInfoStep';
 import PartiesStep from './create/PartiesStep';
 import TermsStep from './create/TermsStep';
 import ReviewStep from './create/ReviewStep';
 import { CheckCircle2, ChevronRight, ChevronLeft, Loader2, AlertCircle } from 'lucide-react';
-import { isConnected, signTransaction, getAddress } from '@stellar/freighter-api';
-import { Horizon, Networks, TransactionBuilder, Account, Asset, Operation } from 'stellar-sdk';
+import { isConnected, getAddress } from '@stellar/freighter-api';
 
 const STEPS = [
   { id: 'basic', title: 'Basic Info', fields: ['title', 'description', 'category'] },
@@ -35,10 +33,10 @@ export default function CreateEscrowWizard() {
     }
   });
 
-  const { trigger, handleSubmit, getValues } = methods;
+  const { trigger, handleSubmit } = methods;
 
   const nextStep = async () => {
-    const fields = STEPS[currentStep].fields as any[];
+    const fields = STEPS[currentStep].fields as string[];
     const isValid = await trigger(fields);
 
     if (isValid) {
@@ -52,7 +50,7 @@ export default function CreateEscrowWizard() {
     setSubmitError(null);
   };
 
-  const onSubmit = async (data: CreateEscrowFormData) => {
+  const onSubmit = async () => {
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -98,9 +96,9 @@ export default function CreateEscrowWizard() {
 
       setTxHash('7a8b9c...mock_hash...1d2e3f'); // Success state
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      setSubmitError(error.message || 'Failed to create escrow. Please try again.');
+      setSubmitError(error instanceof Error ? error.message : 'Failed to create escrow. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

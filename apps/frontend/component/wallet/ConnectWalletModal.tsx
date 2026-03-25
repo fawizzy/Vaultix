@@ -31,8 +31,8 @@ const WALLET_INFO = {
 
 export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ isOpen, onClose }) => {
   const { connect, getAvailableWallets, isConnecting, error } = useWallet();
-  const [availableWallets, setAvailableWallets] = useState<any[]>([]);
-  const [selectedWallet, setSelectedWallet] = useState<any | null>(null);
+  const [availableWallets, setAvailableWallets] = useState<string[]>([]);
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAvailableWallets = async () => {
@@ -45,12 +45,12 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ isOpen, 
     }
   }, [isOpen, getAvailableWallets]);
 
-  const handleConnect = async (walletType: any) => {
+  const handleConnect = async (walletType: string) => {
     try {
       setSelectedWallet(walletType);
-      await connect(walletType);
+      await connect(walletType as Parameters<typeof connect>[0]);
       onClose();
-    } catch (err) {
+    } catch {
       // Error is handled by context
     } finally {
       setSelectedWallet(null);
@@ -88,7 +88,7 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({ isOpen, 
         {/* Wallet Options */}
         <div className="space-y-3">
           {Object.entries(WALLET_INFO).map(([type, info]) => {
-            const walletType = type as any;
+            const walletType = type;
             const isAvailable = availableWallets.includes(walletType);
             const isInstalling = selectedWallet === walletType && isConnecting;
 

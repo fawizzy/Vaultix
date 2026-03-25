@@ -62,8 +62,9 @@ export default function FileDisputeModal({
 
       alert("Dispute filed successfully.");
       onClose();
-    } catch (error: any) {
-      alert(error?.response?.data?.message || "Failed to file dispute.");
+    } catch (error: unknown) {
+      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      alert(message || "Failed to file dispute.");
     } finally {
       setLoading(false);
     }

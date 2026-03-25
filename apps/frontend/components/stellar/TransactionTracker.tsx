@@ -29,7 +29,7 @@ export default function TransactionTracker({
     if (!txHash) return
 
     let mounted = true
-    let intervalId: any = null
+    let intervalId: ReturnType<typeof setInterval> | null = null
 
     async function check() {
       try {
@@ -70,9 +70,9 @@ export default function TransactionTracker({
           setStatus('pending')
           onStatusChange?.('pending')
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!mounted) return
-        setError(err?.message || String(err))
+        setError(err instanceof Error ? err.message : String(err))
         setStatus('failed')
         onStatusChange?.('failed')
       }

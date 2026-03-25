@@ -30,7 +30,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfir
     try {
       await onConfirm(message);
       setMessage(""); // Reset after success
-    } catch (err) {
+    } catch {
       setError("Transaction failed. Please try again or check your wallet.");
     } finally {
       setIsSigning(false);

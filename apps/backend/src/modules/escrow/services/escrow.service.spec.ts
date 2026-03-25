@@ -451,7 +451,7 @@ describe('EscrowService', () => {
 
   describe('findOverview', () => {
     function createOverviewQueryBuilder() {
-      const qb: any = {
+      const qb: Record<string, jest.Mock> = {
         select: jest.fn().mockReturnThis(),
         addSelect: jest.fn().mockReturnThis(),
         setParameter: jest.fn().mockReturnThis(),
